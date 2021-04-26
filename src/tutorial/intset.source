@@ -1,0 +1,137 @@
+create type intset;
+
+create function intset_in(cstring)
+   RETURNS intset
+   AS '_OBJWD_/intset'
+   LANGUAGE C IMMUTABLE STRICT;
+   
+create function intset_out(intset)
+   RETURNS cstring
+   AS '_OBJWD_/intset'
+   LANGUAGE C IMMUTABLE STRICT;
+   
+create type intset(
+	internallength = variable,
+	input = intset_in,
+	output = intset_out,
+	alignment = int
+);
+
+-- Create operators --
+
+
+CREATE FUNCTION intset_checkin(int, intset)
+    RETURNS bool
+    AS '_OBJWD_/intset'
+    LANGUAGE C IMMUTABLE STRICT;
+
+CREATE OPERATOR ? (
+    leftarg = int,
+    rightarg = intset,
+    function = intset_checkin
+);
+
+CREATE FUNCTION intset_cap(intset)
+    RETURNS int4 
+    AS '_OBJWD_/intset'
+    LANGUAGE C IMMUTABLE STRICT;
+
+CREATE OPERATOR # (
+    rightarg = intset,
+    function = intset_cap
+);
+
+------
+
+CREATE FUNCTION intset_superclass(intset, intset)
+    RETURNS bool 
+    AS '_OBJWD_/intset'
+    LANGUAGE C IMMUTABLE STRICT;
+
+CREATE OPERATOR @< (
+	leftarg = intset,
+    rightarg = intset,
+    function = intset_superclass
+);
+
+
+CREATE FUNCTION intset_subclass(intset, intset)
+    RETURNS bool 
+    AS '_OBJWD_/intset'
+    LANGUAGE C IMMUTABLE STRICT;
+
+CREATE OPERATOR >@ (
+	leftarg = intset,
+    rightarg = intset,
+    function = intset_subclass
+);
+------
+
+CREATE FUNCTION intset_equal(intset, intset)
+    RETURNS bool 
+    AS '_OBJWD_/intset'
+    LANGUAGE C IMMUTABLE STRICT;
+
+CREATE OPERATOR = (
+	leftarg = intset,
+    rightarg = intset,
+    function = intset_equal
+);
+
+CREATE FUNCTION intset_notequal(intset, intset)
+    RETURNS bool 
+    AS '_OBJWD_/intset'
+    LANGUAGE C IMMUTABLE STRICT;
+
+CREATE OPERATOR <> (
+	leftarg = intset,
+    rightarg = intset,
+    function = intset_notequal
+);
+
+------
+
+CREATE FUNCTION intset_union(intset, intset)
+    RETURNS intset 
+    AS '_OBJWD_/intset'
+    LANGUAGE C STRICT;
+
+CREATE OPERATOR || (
+	leftarg = intset,
+    rightarg = intset,
+    function = intset_union
+);
+
+CREATE FUNCTION intset_diff(intset, intset)
+    RETURNS intset 
+    AS '_OBJWD_/intset'
+    LANGUAGE C STRICT;
+
+CREATE OPERATOR - (
+	leftarg = intset,
+    rightarg = intset,
+    function = intset_diff
+);
+-----------
+
+CREATE FUNCTION intset_disjunc(intset, intset)
+    RETURNS intset 
+    AS '_OBJWD_/intset'
+    LANGUAGE C STRICT;
+
+CREATE OPERATOR !! (
+	leftarg = intset,
+    rightarg = intset,
+    function = intset_disjunc
+);
+
+CREATE FUNCTION intset_intersec(intset, intset)
+    RETURNS intset 
+   AS '_OBJWD_/intset'
+    LANGUAGE C STRICT;
+
+CREATE OPERATOR && (
+	leftarg = intset,
+    rightarg = intset,
+    function = intset_intersec
+);
